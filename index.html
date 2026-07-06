@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>România — Joc geografic</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+
+<!-- ── Selecție profil ──────────────────────────────────────────────── -->
+<div id="screen-profil">
+    <div id="profil-box">
+        <h2>👤 Cine joacă?</h2>
+        <div id="profil-lista"></div>
+        <div id="profil-adauga">
+            <input id="input-jucator-nou" type="text" placeholder="Nume jucător nou…" maxlength="20"
+                   onkeydown="if(event.key==='Enter') adaugaJucatorNou()">
+            <button onclick="adaugaJucatorNou()">+ Adaugă</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Landing ──────────────────────────────────────────────────────── -->
+<div id="landing" class="ascuns">
+    <div id="landing-inner">
+        <h1>România</h1>
+        <p id="landing-sub">Alege cum vrei să explorezi</p><p class="landing-tagline">Geografie · Personalități · Prim-miniştri</p>
+        <div id="landing-top-bar">
+            <button class="btn-jucator-activ" onclick="schimbaJucator()">
+                <span id="jucator-activ-label">👤 —</span>
+                <span class="btn-schimba-label">schimbă</span>
+            </button>
+            <button class="btn-ach-landing" onclick="deschideAchModal()">🏅 Realizări <span id="ach-count-badge"></span></button>
+        </div>
+        <div id="landing-carduri">
+            <button class="card-mod" style="--card-color:#4f8ef7" onclick="porneste('invatare')">
+                <div class="card-icon">📖</div>
+                <div class="card-titlu">Mod Învățare</div>
+                <div class="card-desc">Descoperă fiecare oraș pas cu pas pe hartă</div>
+            </button>
+            <button class="card-mod" style="--card-color:#2ecc71" onclick="porneste('joc')">
+                <div class="card-icon">🎮</div>
+                <div class="card-titlu">Mod Joacă</div>
+                <div class="card-desc">Găsește orașele pe hartă și bate scorul</div>
+                <div class="card-hs" id="hs-joc"></div>
+            </button>
+            <button class="card-mod" style="--card-color:#e67e22" onclick="porneste('orase')">
+                <div class="card-icon">🏙️</div>
+                <div class="card-titlu">Orașe pe Județe</div>
+                <div class="card-desc">Joacă cu orașele din Satu Mare, Sălaj sau Maramureș</div>
+                <div class="card-hs" id="hs-orase"></div>
+            </button>
+            <button class="card-mod" style="--card-color:#9b59b6" onclick="porneste('maramures')">
+                <div class="card-icon">🏔️</div>
+                <div class="card-titlu">Mod Maramureș</div>
+                <div class="card-desc">Explorează comunele județului Maramureș</div>
+                <div class="card-hs" id="hs-mm"></div>
+            </button>
+            <button class="card-mod" style="--card-color:#e91e8c" onclick="porneste('trivia')">
+                <div class="card-icon">🧠</div>
+                <div class="card-titlu">Trivia Personalități</div>
+                <div class="card-desc">Ghicește județul natal al personalităților române</div>
+                <div class="card-hs" id="hs-trivia-landing"></div>
+            </button>
+            <button class="card-mod" style="--card-color:#f1c40f" onclick="porneste('ministri')">
+                <div class="card-icon">🏛️</div>
+                <div class="card-titlu">Trivia Miniştri</div>
+                <div class="card-desc">Ghicește cine e din fotografie — miniştri şi prim-miniştri ai României</div>
+                <div class="card-hs" id="hs-ministri-landing"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Trivia Personalități ──────────────────────────────────────────── -->
+<div id="submeniu-trivia" class="ascuns">
+    <div id="trivia-inner">
+
+        <!-- Intro -->
+        <div id="trivia-intro">
+            <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
+            <div style="font-size:3.5rem;margin-bottom:12px">🧠</div>
+            <h1>Unde s-au născut?</h1>
+            <p class="orase-sub">10 personalități române — tu ghicești județul natal</p>
+            <div id="trivia-hs-display"></div>
+            <button class="btn-start-trivia" onclick="startTrivia()">Începe jocul</button>
+        </div>
+
+        <!-- Joc -->
+        <div id="trivia-joc" class="ascuns">
+            <div id="trivia-progres-bar-wrap"><div id="trivia-progres-bar"></div></div>
+            <div id="trivia-nr">Întrebarea 1 / 10</div>
+            <div id="trivia-portret-wrap">
+                <img id="trivia-img" src="" alt="portret" referrerpolicy="no-referrer">
+                <div id="trivia-img-placeholder">🧑</div>
+                <div id="trivia-nume"></div>
+                <div id="trivia-info"></div>
+            </div>
+            <div id="trivia-intrebare">În ce județ s-a născut?</div>
+            <div id="trivia-optiuni"></div>
+            <div id="trivia-feedback"></div>
+        </div>
+
+        <!-- Final -->
+        <div id="trivia-final" class="ascuns">
+            <div id="trivia-final-emoji"></div>
+            <div id="trivia-final-scor"></div>
+            <div id="trivia-final-timp"></div>
+            <div id="trivia-final-record"></div>
+            <div class="trivia-final-butoane">
+                <button class="btn-trivia-din-nou" onclick="startTrivia()">🔄 Din nou</button>
+                <button class="btn-trivia-inapoi" onclick="inapoi()">← Meniu</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── Trivia Miniştri ───────────────────────────────────────────────── -->
+<div id="submeniu-ministri" class="ascuns">
+    <div id="trivia-inner">
+
+        <!-- Selecție mod -->
+        <div id="ministri-intro">
+            <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
+            <div style="font-size:3rem;margin-bottom:6px">🏛️</div>
+            <h1>Prim-Miniştri ai României</h1>
+            <div class="ministri-moduri-grid">
+                <button class="mmc" onclick="startMinistri('lista')">
+                    <span class="mmc-icon">📋</span>
+                    <span class="mmc-titlu">Listă completă</span>
+                    <span class="mmc-desc">Toți 72 în ordine cronologică</span>
+                </button>
+                <button class="mmc" onclick="startMinistri('10')">
+                    <span class="mmc-icon">🎯</span>
+                    <span class="mmc-titlu">10 Întrebări</span>
+                    <span class="mmc-desc">Ghicește din fotografie</span>
+                    <span class="mmc-hs" id="hs-ministri-10-card"></span>
+                </button>
+                <button class="mmc" onclick="startMinistri('toti')">
+                    <span class="mmc-icon">🔀</span>
+                    <span class="mmc-titlu">Toți — Aleatoriu</span>
+                    <span class="mmc-desc">Toată lista în ordine aleatorie</span>
+                    <span class="mmc-hs" id="hs-ministri-toti-card"></span>
+                </button>
+                <button class="mmc" onclick="startMinistri('toti-ordine')">
+                    <span class="mmc-icon">📅</span>
+                    <span class="mmc-titlu">Toți — În ordine</span>
+                    <span class="mmc-desc">De la nr. 1 la nr. 72, cronologic</span>
+                    <span class="mmc-hs" id="hs-ministri-toti-ordine-card"></span>
+                </button>
+                <button class="mmc" onclick="startMinistri('scris')">
+                    <span class="mmc-icon">✍️</span>
+                    <span class="mmc-titlu">Mod Scris</span>
+                    <span class="mmc-desc">Scrie numele de familie din memorie</span>
+                    <span class="mmc-hs" id="hs-ministri-scris-card"></span>
+                </button>
+                <button class="mmc" onclick="startMinistri('succesor')">
+                    <span class="mmc-icon">🔗</span>
+                    <span class="mmc-titlu">Succesorul</span>
+                    <span class="mmc-desc">Cine a urmat după el la putere?</span>
+                    <span class="mmc-hs" id="hs-ministri-succesor-card"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Listă completă -->
+        <div id="ministri-lista" class="ascuns">
+            <button class="btn-back-subtle" onclick="inapoiDinMinistri()">← Înapoi</button>
+            <div id="ministri-lista-content"></div>
+        </div>
+
+        <!-- Joc (partajat: 10, toti, scris, succesor) -->
+        <div id="ministri-joc" class="ascuns">
+            <button class="btn-back-subtle ministri-back-btn" onclick="inapoiDinMinistri()">← Ieşi</button>
+            <div id="ministri-progres-bar-wrap"><div id="ministri-progres-bar"></div></div>
+            <div id="ministri-nr">Întrebarea 1 / 10</div>
+            <div id="trivia-portret-wrap">
+                <img id="ministri-img" src="" alt="portret" referrerpolicy="no-referrer">
+                <div id="ministri-img-placeholder">🧑</div>
+                <div id="ministri-rol"></div>
+            </div>
+            <div id="ministri-intrebare">Cine este?</div>
+            <div id="ministri-optiuni"></div>
+            <div id="ministri-scris-wrap" class="ascuns">
+                <input id="ministri-scris-input" type="text" placeholder="Numele de familie…"
+                    autocomplete="off" autocorrect="off" spellcheck="false"
+                    onkeydown="if(event.key==='Enter')verificaScrisMinistri()">
+                <button class="btn-ministri-verifica" onclick="verificaScrisMinistri()">Verifică →</button>
+            </div>
+            <div id="ministri-feedback"></div>
+        </div>
+
+        <!-- Final -->
+        <div id="ministri-final" class="ascuns">
+            <div id="ministri-final-emoji"></div>
+            <div id="ministri-final-scor"></div>
+            <div id="ministri-final-timp"></div>
+            <div id="ministri-final-record"></div>
+            <div class="trivia-final-butoane">
+                <button class="btn-trivia-din-nou" onclick="restartMinistri()">🔄 Din nou</button>
+                <button class="btn-trivia-inapoi" onclick="inapoiDinMinistri()">← Meniu</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── Sub-meniu Orașe pe Județe ────────────────────────────────────── -->
+<div id="submeniu-orase" class="ascuns">
+    <div id="orase-inner">
+        <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
+        <div class="card-icon" style="font-size:3rem;margin-bottom:6px">🏙️</div>
+        <h1>Orașe pe Județe</h1>
+        <p class="orase-sub">Alege județul cu care vrei să joci</p>
+
+        <div class="dif-wrap">
+            <button class="dif-btn activ" id="btn-usor" onclick="setDificultate('usor')">😊 Ușor <span class="dif-desc">hint după 3 greșeli</span></button>
+            <button class="dif-btn" id="btn-greu" onclick="setDificultate('greu')">💀 Greu <span class="dif-desc">90 sec, fără hint</span></button>
+            <button class="dif-btn" id="btn-fara-greseli" onclick="setDificultate('fara-greseli')">☠️ Fără greșeli <span class="dif-desc">o greșeală = game over</span></button>
+        </div>
+        <div class="mod-scris-toggle">
+            <label class="toggle-label">
+                <input type="checkbox" id="chk-mod-scris" onchange="toggleModScris(this.checked)">
+                <span class="toggle-slider"></span>
+                ✏️ Mod Scris — tastezi numele orașului
+            </label>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🌲 Nord-Vest</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('satu-mare')"><div class="cj-titlu">Satu Mare</div><div class="cj-nr">6 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('maramures')"><div class="cj-titlu">Maramureș</div><div class="cj-nr">13 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('salaj')"><div class="cj-titlu">Sălaj</div><div class="cj-nr">4 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('bistrita')"><div class="cj-titlu">Bistrița-Năsăud</div><div class="cj-nr">4 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('cluj')"><div class="cj-titlu">Cluj</div><div class="cj-nr">6 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('bihor')"><div class="cj-titlu">Bihor</div><div class="cj-nr">10 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🏔️ Centru (Transilvania)</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('mures')"><div class="cj-titlu">Mureș</div><div class="cj-nr">11 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('harghita')"><div class="cj-titlu">Harghita</div><div class="cj-nr">9 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('covasna')"><div class="cj-titlu">Covasna</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('sibiu')"><div class="cj-titlu">Sibiu</div><div class="cj-nr">11 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('brasov')"><div class="cj-titlu">Brașov</div><div class="cj-nr">10 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('alba')"><div class="cj-titlu">Alba</div><div class="cj-nr">11 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">⚙️ Vest</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('hunedoara')"><div class="cj-titlu">Hunedoara</div><div class="cj-nr">14 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('timis')"><div class="cj-titlu">Timiș</div><div class="cj-nr">10 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('arad')"><div class="cj-titlu">Arad</div><div class="cj-nr">10 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('caras')"><div class="cj-titlu">Caraș-Severin</div><div class="cj-nr">8 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🌾 Nord-Est (Moldova)</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('suceava')"><div class="cj-titlu">Suceava</div><div class="cj-nr">16 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('botosani')"><div class="cj-titlu">Botoșani</div><div class="cj-nr">7 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('iasi')"><div class="cj-titlu">Iași</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('neamt')"><div class="cj-titlu">Neamț</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('bacau')"><div class="cj-titlu">Bacău</div><div class="cj-nr">8 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('vaslui')"><div class="cj-titlu">Vaslui</div><div class="cj-nr">5 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🌊 Sud-Est (Dobrogea & Câmpie)</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('vrancea')"><div class="cj-titlu">Vrancea</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('galati')"><div class="cj-titlu">Galați</div><div class="cj-nr">4 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('braila')"><div class="cj-titlu">Brăila</div><div class="cj-nr">4 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('buzau')"><div class="cj-titlu">Buzău</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('constanta')"><div class="cj-titlu">Constanța</div><div class="cj-nr">11 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('tulcea')"><div class="cj-titlu">Tulcea</div><div class="cj-nr">5 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🏛️ Sud-Muntenia</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('arges')"><div class="cj-titlu">Argeș</div><div class="cj-nr">7 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('dambovita')"><div class="cj-titlu">Dâmbovița</div><div class="cj-nr">7 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('prahova')"><div class="cj-titlu">Prahova</div><div class="cj-nr">14 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('ialomita')"><div class="cj-titlu">Ialomița</div><div class="cj-nr">7 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('calarasi')"><div class="cj-titlu">Călărași</div><div class="cj-nr">5 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('giurgiu')"><div class="cj-titlu">Giurgiu</div><div class="cj-nr">3 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('teleorman')"><div class="cj-titlu">Teleorman</div><div class="cj-nr">5 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🌻 Sud-Vest (Oltenia)</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('gorj')"><div class="cj-titlu">Gorj</div><div class="cj-nr">9 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('valcea')"><div class="cj-titlu">Vâlcea</div><div class="cj-nr">11 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('dolj')"><div class="cj-titlu">Dolj</div><div class="cj-nr">7 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('olt')"><div class="cj-titlu">Olt</div><div class="cj-nr">8 orașe</div></button>
+                <button class="card-judet" onclick="pornesteOrase('mehedinti')"><div class="cj-titlu">Mehedinți</div><div class="cj-nr">5 orașe</div></button>
+            </div>
+        </div>
+
+        <div class="regiune-grup">
+            <div class="regiune-titlu">🏙️ București-Ilfov</div>
+            <div class="judete-carduri">
+                <button class="card-judet" onclick="pornesteOrase('bucuresti')"><div class="cj-titlu">București</div><div class="cj-nr">6 sectoare</div></button>
+                <button class="card-judet" onclick="pornesteOrase('ilfov')"><div class="cj-titlu">Ilfov</div><div class="cj-nr">8 orașe</div></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── Hartă selecție județ ──────────────────────────────────────────── -->
+<div id="screen-harta-selectie" class="ascuns">
+    <div id="harta-selectie-header">
+        <button class="btn-back-subtle" onclick="inchideHartaSelectie()">← Înapoi</button>
+        <h2>🗺️ Alege un Județ</h2>
+    </div>
+    <div id="harta-selectie-map"></div>
+    <div id="panel-judet-selectat" class="ascuns">
+        <button class="panel-close" onclick="document.getElementById('panel-judet-selectat').classList.add('ascuns')">✕</button>
+        <div id="panel-judet-titlu"></div>
+        <div id="panel-judet-nr"></div>
+        <div id="panel-dif-butoane">
+            <button class="panel-dif" onclick="pornesteJudetDinHarta('usor')">😊 Ușor<span>hint după 3 greșeli</span></button>
+            <button class="panel-dif" onclick="pornesteJudetDinHarta('greu')">💀 Greu<span>90 sec, fără hint</span></button>
+            <button class="panel-dif" onclick="pornesteJudetDinHarta('fara-greseli')">☠️ Fără greșeli<span>o greșeală = game over</span></button>
+            <button class="panel-dif panel-dif-scris" onclick="pornesteJudetScrisDinHarta()">✏️ Mod Scris<span>tastezi din memorie</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Sub-meniu Maramureș ───────────────────────────────────────────── -->
+<div id="submeniu-mm" class="ascuns">
+    <div id="landing-inner">
+        <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
+        <div class="card-icon" style="font-size:3.5rem;margin-bottom:12px">🏔️</div>
+        <h1>Mod Maramureș</h1>
+        <p id="landing-sub">Comunele județului — cu granițele lor reale</p>
+        <div id="landing-carduri">
+            <button class="card-mod" onclick="pornesteMM('invatare')">
+                <div class="card-icon">📖</div>
+                <div class="card-titlu">Învață</div>
+                <div class="card-desc">Descoperă fiecare comună pe hartă, una câte una</div>
+            </button>
+            <button class="card-mod" onclick="pornesteMM('joc')">
+                <div class="card-icon">🎮</div>
+                <div class="card-titlu">Joacă</div>
+                <div class="card-desc">Găsește comunele pe hartă și bate scorul</div>
+            </button>
+            <button class="card-mod" onclick="pornesteMM('scris')">
+                <div class="card-icon">✏️</div>
+                <div class="card-titlu">Mod Scris</div>
+                <div class="card-desc">Comună marcată pe hartă — tu scrii numele</div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Loading ───────────────────────────────────────────────────────── -->
+<div id="loading-screen" class="ascuns">
+    <div id="loading-box">
+        <div class="spinner"></div>
+        <p>Se încarcă comunele din Maramureș...</p>
+        <p class="loading-sub">Se descarcă granițele din OpenStreetMap (10-20 sec)</p>
+        <p class="loading-sub">Dacă nu merge, se va folosi varianta simplificată</p>
+    </div>
+</div>
+
+<!-- ── Ecran principal ───────────────────────────────────────────────── -->
+<div id="ecran" class="ascuns">
+
+    <button id="btn-inapoi" onclick="inapoi()">← Înapoi</button>
+
+    <!-- UI Învățare (România) -->
+    <div id="ui-invatare" class="ascuns">
+        <div id="invatare-card">
+            <div id="inv-progres-text">Orașul <span id="inv-nr">1</span> din <span id="inv-total">67</span></div>
+            <div id="invatare-nume"></div>
+            <button id="btn-continua" onclick="continuaInvatare()">Continuă →</button>
+        </div>
+        <div id="inv-progres-bar-wrap"><div id="inv-progres-bar"></div></div>
+    </div>
+
+    <!-- UI Joc (România) -->
+    <div id="ui-joc" class="ascuns">
+        <div id="panou">
+            <div id="cerinta-box">Se încarcă...</div>
+            <div id="streak-badge" class="streak-badge ascuns"></div>
+            <div id="stats">
+                <div class="stat">✅ Corecte: <span id="scor-corect">0</span></div>
+                <div class="stat">❌ Greșeli: <span id="scor-gresit">0</span></div>
+                <div class="stat">📍 Rămase: <span id="ramase-nr">-</span></div>
+            </div>
+        </div>
+        <div id="progres-bar-wrap"><div id="progres-bar"></div></div>
+        <div id="joc-butoane">
+            <button class="btn-joc-actiune" onclick="skipOras()">⏭ Skip</button>
+            <button id="btn-hint-oras" class="btn-joc-actiune ascuns" onclick="folosestHint()">💡 Hint <span style="font-size:0.75rem;opacity:0.8">−5s</span></button>
+            <button class="btn-joc-actiune secundar" onclick="replay()">🔄 Restart</button>
+        </div>
+    </div>
+
+    <!-- UI Învățare Maramureș -->
+    <div id="ui-mm-invatare" class="ascuns">
+        <div id="invatare-card">
+            <div id="inv-progres-text">Comuna <span id="mm-inv-nr">1</span> din <span id="mm-inv-total">-</span></div>
+            <div id="mm-invatare-nume"></div>
+            <button id="mm-btn-continua" onclick="continuaMMInvatare()">Continuă →</button>
+        </div>
+        <div id="inv-progres-bar-wrap"><div id="mm-inv-progres-bar"></div></div>
+    </div>
+
+    <!-- UI Joc Maramureș -->
+    <div id="ui-mm-joc" class="ascuns">
+        <div id="panou">
+            <div id="mm-cerinta-box">Se încarcă...</div>
+            <div id="mm-streak-badge" class="streak-badge ascuns"></div>
+            <div id="stats">
+                <div class="stat">✅ Corecte: <span id="mm-scor-corect">0</span></div>
+                <div class="stat">❌ Greșeli: <span id="mm-scor-gresit">0</span></div>
+                <div class="stat">📍 Rămase: <span id="mm-ramase-nr">-</span></div>
+            </div>
+        </div>
+        <div id="progres-bar-wrap"><div id="mm-progres-bar"></div></div>
+        <div id="joc-butoane">
+            <button class="btn-joc-actiune" onclick="skipMM()">⏭ Skip</button>
+            <button class="btn-joc-actiune secundar" onclick="replayMM()">🔄 Restart</button>
+        </div>
+    </div>
+
+    <!-- UI Mod Scris Orașe -->
+    <div id="ui-scris" class="ascuns">
+        <div id="panou">
+            <div id="scris-cerinta">Scrie toate orașele județului!</div>
+            <div id="scris-stats">
+                <div class="stat">✅ Găsite: <span id="scris-corect">0</span></div>
+                <div class="stat">📍 Rămase: <span id="scris-ramase">-</span></div>
+            </div>
+        </div>
+        <div id="scris-input-wrap">
+            <input id="scris-input" type="text" placeholder="Scrie un oraș…" autocomplete="off" autocorrect="off" spellcheck="false"
+                   oninput="onInputScris()">
+        </div>
+        <div id="scris-feedback"></div>
+        <div id="progres-bar-wrap"><div id="scris-progres-bar"></div></div>
+        <div id="joc-butoane">
+            <button class="btn-joc-actiune" onclick="renuntaScris()">🏳 Renunță</button>
+            <button class="btn-joc-actiune secundar" onclick="replayScris()">🔄 Restart</button>
+        </div>
+    </div>
+
+    <!-- UI Mod Scris MM -->
+    <div id="ui-mm-scris" class="ascuns">
+        <div id="panou">
+            <div id="mm-scris-cerinta">Scrie toate comunele din Maramureș!</div>
+            <div id="scris-stats">
+                <div class="stat">✅ Găsite: <span id="mm-scris-corect">0</span></div>
+                <div class="stat">📍 Rămase: <span id="mm-scris-ramase">-</span></div>
+            </div>
+        </div>
+        <div id="scris-input-wrap">
+            <input id="mm-scris-input" type="text" placeholder="Scrie o comună…" autocomplete="off" autocorrect="off" spellcheck="false"
+                   oninput="onInputMMScris()">
+        </div>
+        <div id="mm-scris-feedback"></div>
+        <div id="progres-bar-wrap"><div id="mm-scris-progres-bar"></div></div>
+        <div id="joc-butoane">
+            <button class="btn-joc-actiune" onclick="renuntaMMScris()">🏳 Renunță</button>
+            <button class="btn-joc-actiune secundar" onclick="replayMMScris()">🔄 Restart</button>
+        </div>
+    </div>
+
+    <div id="map"></div>
+</div>
+
+<!-- ── Ecrane finale ─────────────────────────────────────────────────── -->
+<div id="final-invatare">
+    <div id="final-invatare-box">
+        <div class="final-emoji">🎉</div>
+        <h2>Ai învățat toate orașele!</h2>
+        <p>Ești pregătit să joci?</p>
+        <button onclick="porneste('joc')">🎮 Joacă acum!</button>
+        <button class="btn-sec" onclick="inapoi()">← Meniu principal</button>
+    </div>
+</div>
+
+<div id="final-joc">
+    <div id="final-joc-box">
+        <div class="final-emoji" id="final-joc-emoji">🏆</div>
+        <h2 id="final-joc-titlu">Felicitări!</h2>
+        <p id="final-joc-subtitlu">Ai terminat jocul!</p>
+        <div id="final-scor"></div>
+        <p id="final-detalii"></p>
+        <p id="final-judete-stat" class="ascuns" style="color:#f0c040;font-size:0.9rem"></p>
+        <button id="btn-replay-final" onclick="replay()">🔄 Joacă din nou</button>
+        <button id="btn-judet-urmator" class="btn-sec ascuns" onclick="judetUrmator()">→ Județ următor</button>
+        <button class="btn-sec" onclick="inapoi()">← Meniu principal</button>
+    </div>
+</div>
+
+<div id="final-mm-invatare">
+    <div id="final-mm-invatare-box">
+        <div class="final-emoji">🎉</div>
+        <h2>Ai învățat toate comunele!</h2>
+        <p>Ești pregătit să joci Maramureș?</p>
+        <button onclick="pornesteMM('joc')">🎮 Joacă acum!</button>
+        <button class="btn-sec" onclick="inapoi()">← Meniu Maramureș</button>
+    </div>
+</div>
+
+<div id="final-mm-joc">
+    <div id="final-mm-joc-box">
+        <div class="final-emoji">🏆</div>
+        <h2>Felicitări!</h2>
+        <p>Ai terminat jocul Maramureș!</p>
+        <div id="mm-final-scor"></div>
+        <p id="mm-final-detalii"></p>
+        <button onclick="replayMM()">🔄 Joacă din nou</button>
+        <button class="btn-sec" onclick="inapoi()">← Meniu Maramureș</button>
+    </div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ── Achievement toasts ─────────────────────────────────────────────── -->
+<div id="ach-toast-container"></div>
+
+<!-- ── Achievement modal ─────────────────────────────────────────────── -->
+<div id="ach-modal" class="ascuns" onclick="inchideAchModal()">
+    <div id="ach-modal-box" onclick="event.stopPropagation()">
+        <h2>🏅 Realizările tale</h2>
+        <div id="ach-lista"></div>
+        <button class="btn-sec" onclick="inchideAchModal()" style="margin-top:16px;width:100%">Închide</button>
+    </div>
+</div>
+
+<!-- ── Scoreboard ────────────────────────────────────────────────────── -->
+<div id="scoreboard" class="ascuns">
+    <div id="sb-mod"></div>
+    <div id="sb-time">⏱ 0:00</div>
+    <div id="sb-pct-scris" class="ascuns"></div>
+    <div id="sb-best">🏆 --:--</div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
