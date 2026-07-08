@@ -873,6 +873,353 @@ body {
     margin-bottom: 6px;
 }
 
+/* Mod scris — ghicește numele */
+#trivia-scris-wrap {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    align-items: stretch;
+}
+#trivia-scris-input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#trivia-scris-input:focus { border-color: #8a2be2; }
+#trivia-scris-input::placeholder { color: rgba(255,255,255,0.35); }
+.btn-verifica-trivia {
+    padding: 12px 22px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #8a2be2, #5b2d8a);
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    box-shadow: 0 3px 10px rgba(138,43,226,0.4);
+    white-space: nowrap;
+}
+.btn-verifica-trivia:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(138,43,226,0.55); }
+.btn-verifica-trivia:disabled { opacity: 0.5; cursor: default; }
+
+/* ── Ghicește Numele — galerie ───────────────────────────────────────── */
+#trivia-ghiceste-nume {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+/* Zona fixă de sus */
+#tgn-top {
+    flex-shrink: 0;
+    padding: 20px 20px 0;
+}
+#tgn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+#tgn-header h2 { font-size: 1.3rem; font-weight: 700; }
+#tgn-scor-bar {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0c040;
+    background: rgba(240,192,64,0.12);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(240,192,64,0.25);
+}
+#tgn-scor-bar #tgn-rezolvate { font-size: 1.15rem; }
+.btn-tgn-gata {
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(46,204,113,0.2);
+    border: 1.5px solid #2ecc71;
+    color: #2ecc71;
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.btn-tgn-gata:hover { background: rgba(46,204,113,0.35); }
+
+#tgn-search-wrap {
+    padding-bottom: 16px;
+}
+#tgn-search {
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(138,43,226,0.5);
+    color: #fff;
+    font-size: 1.05rem;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+#tgn-search:focus { border-color: #8a2be2; box-shadow: 0 0 0 3px rgba(138,43,226,0.2); }
+#tgn-search::placeholder { color: rgba(255,255,255,0.35); }
+
+/* Linia de separare */
+#tgn-divider {
+    flex-shrink: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 0 20px;
+}
+
+/* Zona scrollabilă cu poze */
+#tgn-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 40px;
+    scroll-behavior: smooth;
+}
+#tgn-scroll::-webkit-scrollbar { width: 6px; }
+#tgn-scroll::-webkit-scrollbar-track { background: transparent; }
+#tgn-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+#tgn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.tgn-card {
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, transform 0.15s;
+}
+.tgn-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.22); }
+.tgn-card.tgn-corect {
+    border-color: #2ecc71;
+    background: rgba(46,204,113,0.1);
+}
+.tgn-card.tgn-gresit {
+    border-color: #e74c3c;
+    animation: tgn-shake 0.35s ease;
+}
+@keyframes tgn-shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+}
+
+.tgn-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+}
+.tgn-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.3);
+}
+.tgn-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+
+/* Buton renunță pe card */
+.tgn-ren-btn {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2;
+    transition: background 0.15s;
+}
+.tgn-ren-btn:hover { background: rgba(231,76,60,0.8); border-color: #e74c3c; }
+
+.tgn-card.tgn-renuntat {
+    border-color: rgba(255,255,255,0.2);
+    opacity: 0.55;
+}
+.tgn-label-renuntat {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    padding: 6px 8px 8px;
+    line-height: 1.3;
+}
+
+.tgn-label-corect {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #2ecc71;
+    padding: 0 8px 10px;
+    line-height: 1.3;
+}
+
+@media (max-width: 480px) {
+    #tgn-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+}
+
+/* ── Personalități pe Județe ──────────────────────────────────────────────── */
+#tpj-selector {
+    padding: 24px 20px 60px;
+    max-width: 860px;
+    margin: 0 auto;
+}
+#tpj-judete-wrap .judete-carduri {
+    justify-content: flex-start;
+}
+
+/* Joc TPJ — sticky header + scrollable grid */
+#tpj-joc {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+#tpj-top {
+    flex-shrink: 0;
+    padding: 16px 20px 12px;
+}
+#tpj-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+#tpj-cerinta {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+}
+#tpj-cerinta strong {
+    color: #f1c40f;
+}
+#tpj-scor-bar {
+    display: flex;
+    gap: 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.tpj-sb-corect { color: #2ecc71; }
+.tpj-sb-gresit  { color: #e74c3c; }
+.tpj-sb-ramase  { color: rgba(255,255,255,0.55); }
+#tpj-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+}
+#tpj-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 40px;
+}
+#tpj-foto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+/* Card foto — clickabil, fără nume */
+.tpj-card {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.18s, transform 0.15s, background 0.18s;
+    display: flex;
+    flex-direction: column;
+}
+.tpj-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.09);
+}
+.tpj-card.tpj-corect {
+    border-color: #2ecc71;
+    background: rgba(46,204,113,0.1);
+    cursor: default;
+    pointer-events: none;
+}
+.tpj-card.tpj-gresit {
+    border-color: #e74c3c;
+    animation: tgn-shake 0.35s ease;
+}
+
+/* Final TPJ */
+#tpj-final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 40px 20px;
+    text-align: center;
+}
+#tpj-final-emoji { font-size: 4rem; margin-bottom: 12px; }
+#tpj-final-titlu { font-size: 1.6rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+#tpj-final-scor  { font-size: 1.1rem; color: rgba(255,255,255,0.75); margin-bottom: 8px; }
+#tpj-final-hs    { font-size: 1rem; color: #f1c40f; font-weight: 700; margin-bottom: 24px; min-height: 1.4em; }
+
+/* Listă personalități */
+#trivia-lista {
+    padding: 24px 20px 60px;
+    max-width: 640px;
+    margin: 0 auto;
+}
+#trivia-lista h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 18px;
+}
+#trivia-lista-content .ml-rand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    margin-bottom: 8px;
+    transition: background 0.15s;
+}
+#trivia-lista-content .ml-rand:hover { background: rgba(255,255,255,0.08); }
+
 /* Final screen */
 #trivia-final-emoji { font-size: 4rem; margin-bottom: 10px; }
 #trivia-final-scor  { font-size: 2.2rem; font-weight: 700; margin-bottom: 6px; }
@@ -1558,9 +1905,9 @@ body {
 #ministri-lista-content { display: flex; flex-direction: column; gap: 6px; padding: 8px 0 32px; }
 
 .ml-rand {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 16px;
     background: rgba(255,255,255,0.06);
-    border-radius: 10px; padding: 8px 12px;
+    border-radius: 12px; padding: 10px 16px;
     border: 1px solid rgba(255,255,255,0.08);
 }
 .ml-interimar {
@@ -1569,25 +1916,25 @@ body {
     border-style: dashed;
 }
 .ml-nr {
-    font-size: 0.75rem; font-weight: 700;
-    color: rgba(255,255,255,0.4); min-width: 28px;
+    font-size: 0.8rem; font-weight: 700;
+    color: rgba(255,255,255,0.4); min-width: 32px;
     text-align: right;
 }
 .ml-img-wrap { position: relative; flex-shrink: 0; }
 .ml-img {
-    width: 44px; height: 56px; object-fit: cover;
-    border-radius: 6px; display: block;
+    width: 72px; height: 90px; object-fit: cover;
+    border-radius: 8px; display: block;
 }
 .ml-placeholder {
-    width: 44px; height: 56px; display: flex;
+    width: 72px; height: 90px; display: flex;
     align-items: center; justify-content: center;
-    font-size: 1.4rem; background: rgba(255,255,255,0.08);
-    border-radius: 6px; flex-shrink: 0;
+    font-size: 2rem; background: rgba(255,255,255,0.08);
+    border-radius: 8px; flex-shrink: 0;
 }
 .ml-placeholder.ascuns { display: none; }
 .ml-info { flex: 1; min-width: 0; }
-.ml-nume { font-size: 0.9rem; font-weight: 600; }
-.ml-sub  { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.ml-nume { font-size: 1rem; font-weight: 600; }
+.ml-sub  { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 3px; }
 
 /* ── Joc ── */
 #ministri-progres-bar-wrap {
@@ -1654,3 +2001,439 @@ body {
     #ministri-scris-wrap { flex-direction: column; }
 }
 
+
+/* ══════════════════════════════════════════════════════════════════ */
+/* ── Duel Online ──────────────────────────────────────────────── */
+
+#submeniu-duel {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+}
+
+#duel-inner {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+}
+
+#duel-inner h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.duel-tip-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 24px 0 28px;
+}
+
+.duel-tip-btn {
+    padding: 10px 22px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.6);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.duel-tip-btn.activ {
+    background: rgba(231,76,60,0.22);
+    border-color: #e74c3c;
+    color: #fff;
+}
+
+.duel-actiuni {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+}
+
+.btn-duel-mare {
+    width: 100%;
+    max-width: 320px;
+    padding: 15px 24px;
+    border-radius: 16px;
+    background: #e74c3c;
+    border: none;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 8px 24px rgba(231,76,60,0.35);
+}
+
+.btn-duel-mare:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(231,76,60,0.45);
+}
+
+.btn-duel-mare.btn-duel-sec {
+    background: rgba(255,255,255,0.1);
+    box-shadow: none;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    width: auto;
+    padding: 13px 22px;
+}
+
+.duel-sau {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+}
+
+.duel-join-wrap {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+}
+
+#duel-cod-input {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 4px;
+    outline: none;
+}
+
+#duel-cod-input:focus {
+    border-color: rgba(231,76,60,0.6);
+}
+
+.duel-cod-mare {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: 12px;
+    color: #e74c3c;
+    text-shadow: 0 0 30px rgba(231,76,60,0.4);
+    margin: 16px 0;
+}
+
+/* ── Scoreboard ── */
+#duel-scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+}
+
+.duel-pscore {
+    flex: 1;
+    text-align: center;
+}
+
+.duel-pname {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.duel-pval {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.duel-pq {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+    margin-top: 2px;
+}
+
+.duel-mine .duel-pval { color: #e74c3c; }
+.duel-mine .duel-pname { color: rgba(255,255,255,0.8); }
+
+.duel-vs-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+    padding: 0 8px;
+}
+
+/* ── Progress bar ── */
+#duel-progres-bar-wrap {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+#duel-progres-bar {
+    height: 100%;
+    background: #e74c3c;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+#duel-nr {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+/* ── Portret duel (same as trivia) ── */
+#duel-portret-wrap {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-align: left;
+}
+
+#duel-img {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    flex-shrink: 0;
+}
+
+#duel-img-ph {
+    width: 100px;
+    height: 120px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    flex-shrink: 0;
+}
+
+#duel-portret-info { flex: 1; }
+
+#duel-portret-nume {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+#duel-portret-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+}
+
+#duel-intrebare {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+#duel-optiuni {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+#duel-feedback {
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    min-height: 1.4em;
+    color: rgba(255,255,255,0.7);
+}
+
+/* ── Countdown ── */
+#duel-countdown {
+    text-align: center;
+}
+
+#duel-countdown-nr {
+    animation: scoreCount 0.4s ease both;
+}
+
+/* ── Final ── */
+.duel-final-scoruri-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.duel-final-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    font-size: 1rem;
+}
+
+.duel-final-row.mine {
+    border-color: rgba(231,76,60,0.5);
+    background: rgba(231,76,60,0.1);
+}
+
+.duel-final-row strong {
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .duel-cod-mare { font-size: 3rem; letter-spacing: 8px; }
+    #duel-portret-wrap { flex-direction: column; text-align: center; }
+    #duel-img, #duel-img-ph { width: 80px; height: 96px; }
+}
+
+/* ── Firebase Cloud Sync UI ─────────────────────────────────────────────────── */
+
+#fb-profil-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#fb-btn-profil {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+#fb-btn-profil:hover { background: rgba(255,255,255,0.14); }
+#fb-btn-profil.fb-conectat {
+    background: rgba(46,204,113,0.18);
+    border-color: rgba(46,204,113,0.4);
+    color: #2ecc71;
+    font-size: .8rem;
+}
+
+#fb-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .82rem;
+}
+.fb-sync-ok { color: #2ecc71; }
+.fb-logout-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: .78rem;
+    cursor: pointer;
+}
+.fb-logout-btn:hover { border-color: rgba(231,76,60,0.5); color: #e74c3c; }
+
+/* Modal */
+#fb-modal {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+}
+#fb-modal.ascuns { display: none; }
+#fb-modal-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+}
+#fb-modal-box {
+    position: relative; z-index: 1;
+    background: #1e2a3a;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 340px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+#fb-modal-box h2 { color: #fff; margin-bottom: 4px; }
+#fb-modal-box input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 14px;
+    font-size: .95rem;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    outline: none;
+}
+#fb-modal-box input:focus { border-color: rgba(79,142,247,0.6); }
+.fb-err-text { color: #e74c3c; font-size: .83rem; min-height: 18px; margin-bottom: 12px; }
+.fb-btn-row { display: flex; gap: 10px; }
+.fb-btn-primary {
+    flex: 1;
+    background: #4f8ef7;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.fb-btn-primary:hover { background: #3a7de8; }
+.fb-btn-secondary {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px;
+    font-size: .95rem;
+    cursor: pointer;
+}
+.fb-btn-secondary:hover { background: rgba(255,255,255,0.12); }
+.fb-close-btn {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: rgba(255,255,255,0.4);
+    font-size: 1.1rem; cursor: pointer; padding: 4px 8px;
+}
+.fb-close-btn:hover { color: #fff; }

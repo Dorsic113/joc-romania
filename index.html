@@ -22,6 +22,10 @@
                    onkeydown="if(event.key==='Enter') adaugaJucatorNou()">
             <button onclick="adaugaJucatorNou()">+ Adaugă</button>
         </div>
+        <div id="fb-profil-section">
+            <div id="fb-status-bar"></div>
+            <button id="fb-btn-profil" onclick="deschideModalCloud()">☁️ Conectează la cloud</button>
+        </div>
     </div>
 </div>
 
@@ -38,22 +42,10 @@
             <button class="btn-ach-landing" onclick="deschideAchModal()">🏅 Realizări <span id="ach-count-badge"></span></button>
         </div>
         <div id="landing-carduri">
-            <button class="card-mod" style="--card-color:#4f8ef7" onclick="porneste('invatare')">
-                <div class="card-icon">📖</div>
-                <div class="card-titlu">Mod Învățare</div>
-                <div class="card-desc">Descoperă fiecare oraș pas cu pas pe hartă</div>
-            </button>
-            <button class="card-mod" style="--card-color:#2ecc71" onclick="porneste('joc')">
-                <div class="card-icon">🎮</div>
-                <div class="card-titlu">Mod Joacă</div>
-                <div class="card-desc">Găsește orașele pe hartă și bate scorul</div>
-                <div class="card-hs" id="hs-joc"></div>
-            </button>
-            <button class="card-mod" style="--card-color:#e67e22" onclick="porneste('orase')">
-                <div class="card-icon">🏙️</div>
-                <div class="card-titlu">Orașe pe Județe</div>
-                <div class="card-desc">Joacă cu orașele din Satu Mare, Sălaj sau Maramureș</div>
-                <div class="card-hs" id="hs-orase"></div>
+            <button class="card-mod" style="--card-color:#4f8ef7" onclick="porneste('geografie')">
+                <div class="card-icon">🗺️</div>
+                <div class="card-titlu">Geografie</div>
+                <div class="card-desc">Învață și joacă cu orașele României pe hartă</div>
             </button>
             <button class="card-mod" style="--card-color:#9b59b6" onclick="porneste('maramures')">
                 <div class="card-icon">🏔️</div>
@@ -73,7 +65,139 @@
                 <div class="card-desc">Ghicește cine e din fotografie — miniştri şi prim-miniştri ai României</div>
                 <div class="card-hs" id="hs-ministri-landing"></div>
             </button>
+            <button class="card-mod" style="--card-color:#e74c3c" onclick="porneste('duel')">
+                <div class="card-icon">⚔️</div>
+                <div class="card-titlu">Duel Online</div>
+                <div class="card-desc">Joacă împotriva unui prieten în timp real</div>
+            </button>
         </div>
+    </div>
+</div>
+
+<!-- ── Geografie sub-meniu ───────────────────────────────────────────────── -->
+<div id="submeniu-geografie" class="ascuns">
+    <div id="geo-inner">
+        <button onclick="inapoiDinGeografie()">← Înapoi</button>
+        <div style="font-size:3rem;margin-bottom:6px">🗺️</div>
+        <h1>Geografie</h1>
+        <div class="ministri-moduri-grid">
+            <button class="mmc" onclick="porneste('invatare')">
+                <span class="mmc-icon">📖</span>
+                <span class="mmc-titlu">Mod Învățare</span>
+                <span class="mmc-desc">Descoperă fiecare oraș pas cu pas pe hartă</span>
+            </button>
+            <button class="mmc" onclick="porneste('joc')">
+                <span class="mmc-icon">🎮</span>
+                <span class="mmc-titlu">Mod Joacă</span>
+                <span class="mmc-desc">Găsește orașele pe hartă și bate scorul</span>
+                <span class="mmc-hs" id="geo-hs-joc"></span>
+            </button>
+            <button class="mmc" onclick="porneste('orase')">
+                <span class="mmc-icon">🏙️</span>
+                <span class="mmc-titlu">Orașe pe Județe</span>
+                <span class="mmc-desc">Joacă cu orașele din Satu Mare, Sălaj sau Maramureș</span>
+                <span class="mmc-hs" id="geo-hs-orase"></span>
+            </button>
+            <button class="mmc" onclick="porneste('usor')">
+                <span class="mmc-icon">⭐</span>
+                <span class="mmc-titlu">Mod Ușor</span>
+                <span class="mmc-desc">Doar cele mai cunoscute 20 de orașe din România</span>
+                <span class="mmc-hs" id="geo-hs-usor"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Duel Online ──────────────────────────────────────────────────────── -->
+<div id="submeniu-duel" class="ascuns">
+    <div id="duel-inner">
+
+        <!-- Setup -->
+        <div id="duel-setup">
+            <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
+            <div style="font-size:3.2rem;margin-bottom:12px">⚔️</div>
+            <h1>Duel Online</h1>
+            <p class="orase-sub">Joacă împotriva unui prieten în timp real</p>
+
+            <div class="duel-tip-selector">
+                <button class="duel-tip-btn activ" id="duel-tip-ministri" onclick="selecteazaTipDuel('ministri',this)">🏛️ Miniştri</button>
+                <button class="duel-tip-btn" id="duel-tip-trivia" onclick="selecteazaTipDuel('trivia',this)">🧠 Personalități</button>
+                <button class="duel-tip-btn" id="duel-tip-geo" onclick="selecteazaTipDuel('geografie',this)">🗺️ Geografie</button>
+                <button class="duel-tip-btn" id="duel-tip-mixt" onclick="selecteazaTipDuel('mixt',this)">🎲 Mixt</button>
+            </div>
+
+            <div class="duel-actiuni">
+                <button class="btn-duel-mare" onclick="duelCreeazaCamera()">🎮 Creează cameră</button>
+                <div class="duel-sau">— sau —</div>
+                <div class="duel-join-wrap">
+                    <input id="duel-cod-input" type="text" maxlength="4" placeholder="Cod cameră (4 cifre)"
+                           oninput="this.value=this.value.replace(/\D/g,'')">
+                    <button class="btn-duel-mare btn-duel-sec" onclick="duelIntraInCamera()">Intră →</button>
+                </div>
+            </div>
+            <div id="duel-eroare" style="color:#ff6b7a;margin-top:14px;font-size:0.9rem;min-height:1.2em"></div>
+        </div>
+
+        <!-- Waiting -->
+        <div id="duel-asteptare" class="ascuns">
+            <button class="btn-back-subtle" onclick="duelParaseste()">← Ieși</button>
+            <div style="font-size:2.8rem;margin-bottom:12px">⏳</div>
+            <h2>Camera ta</h2>
+            <div id="duel-cod-afisat" class="duel-cod-mare">----</div>
+            <p style="color:rgba(255,255,255,0.5);margin-top:16px;font-size:0.95rem">Trimite codul prietenului tău</p>
+            <p id="duel-asteptare-status" style="color:rgba(255,255,255,0.3);font-size:0.85rem;margin-top:8px">Așteptând conexiunea...</p>
+        </div>
+
+        <!-- Countdown -->
+        <div id="duel-countdown" class="ascuns">
+            <div id="duel-countdown-nr" style="font-size:8rem;font-weight:800;line-height:1">3</div>
+            <div style="color:rgba(255,255,255,0.5);font-size:1.1rem;margin-top:8px">Pregătește-te!</div>
+        </div>
+
+        <!-- Joc -->
+        <div id="duel-joc" class="ascuns">
+            <div id="duel-scoreboard">
+                <div class="duel-pscore" id="duel-ps1">
+                    <div class="duel-pname" id="duel-name1">—</div>
+                    <div class="duel-pval" id="duel-scor1">0</div>
+                    <div class="duel-pq" id="duel-q1">0/10</div>
+                </div>
+                <div class="duel-vs-badge">VS</div>
+                <div class="duel-pscore" id="duel-ps2">
+                    <div class="duel-pname" id="duel-name2">—</div>
+                    <div class="duel-pval" id="duel-scor2">0</div>
+                    <div class="duel-pq" id="duel-q2">0/10</div>
+                </div>
+            </div>
+
+            <div id="duel-progres-bar-wrap"><div id="duel-progres-bar"></div></div>
+            <div id="duel-nr">Întrebarea 1 / 10</div>
+
+            <div id="duel-portret-wrap">
+                <img id="duel-img" src="" alt="portret" referrerpolicy="no-referrer">
+                <div id="duel-img-ph">🧑</div>
+                <div id="duel-portret-info">
+                    <div id="duel-portret-nume"></div>
+                    <div id="duel-portret-sub"></div>
+                </div>
+            </div>
+
+            <div id="duel-intrebare">—</div>
+            <div id="duel-optiuni"></div>
+            <div id="duel-feedback"></div>
+        </div>
+
+        <!-- Final -->
+        <div id="duel-final" class="ascuns">
+            <div id="duel-final-emoji" style="font-size:4rem;margin-bottom:12px">🏆</div>
+            <h2 id="duel-final-titlu" style="font-size:1.6rem;margin-bottom:20px">—</h2>
+            <div id="duel-final-scoruri" class="duel-final-scoruri-wrap"></div>
+            <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">
+                <button class="btn-principal" onclick="duelDinNou()">🔄 Joacă din nou</button>
+                <button class="btn-secundar" onclick="inapoiDinDuel()">← Meniu</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -84,15 +208,105 @@
         <!-- Intro -->
         <div id="trivia-intro">
             <button class="btn-back-subtle" onclick="inapoi()">← Înapoi</button>
-            <div style="font-size:3.5rem;margin-bottom:12px">🧠</div>
-            <h1>Unde s-au născut?</h1>
-            <p class="orase-sub">10 personalități române — tu ghicești județul natal</p>
-            <div id="trivia-hs-display"></div>
-            <button class="btn-start-trivia" onclick="startTrivia()">Începe jocul</button>
+            <div style="font-size:3rem;margin-bottom:6px">🧠</div>
+            <h1>Personalități Române</h1>
+            <div class="ministri-moduri-grid">
+                <button class="mmc" onclick="startTriviaLista()">
+                    <span class="mmc-icon">📋</span>
+                    <span class="mmc-titlu">Listă completă</span>
+                    <span class="mmc-desc">Toate personalitățile cu foto și info</span>
+                </button>
+                <button class="mmc" onclick="startTrivia('judet')">
+                    <span class="mmc-icon">📍</span>
+                    <span class="mmc-titlu">Ghicește județul</span>
+                    <span class="mmc-desc">10 personalități — tu ghicești județul natal</span>
+                    <span class="mmc-hs" id="trivia-hs-display"></span>
+                </button>
+                <button class="mmc" onclick="startTriviaGhicesteNume()">
+                    <span class="mmc-icon">✍️</span>
+                    <span class="mmc-titlu">Ghicește numele</span>
+                    <span class="mmc-desc">Toate pozele — scrie cine vrei tu</span>
+                    <span class="mmc-hs" id="trivia-hs-nume-display"></span>
+                </button>
+                <button class="mmc" onclick="startTpjSelector()">
+                    <span class="mmc-icon">🗺️</span>
+                    <span class="mmc-titlu">Personalități pe Județe</span>
+                    <span class="mmc-desc">Alege un județ și identifică personalitățile după poză</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Personalități pe Județe — selector județ -->
+        <div id="tpj-selector" class="ascuns">
+            <button class="btn-back-subtle" onclick="inapoiDinTpjSelector()">← Înapoi</button>
+            <div style="font-size:3rem;margin-bottom:6px">🗺️</div>
+            <h1>Personalități pe Județe</h1>
+            <p class="orase-sub">Alege județul cu care vrei să joci</p>
+            <div id="tpj-judete-wrap"></div>
+        </div>
+
+        <!-- Personalități pe Județe — joc -->
+        <div id="tpj-joc" class="ascuns">
+            <div id="tpj-top">
+                <button class="btn-back-subtle" onclick="inapoiDinTpjJoc()">← Înapoi</button>
+                <div id="tpj-header">
+                    <div id="tpj-cerinta">Cine este <strong id="tpj-nume-cautat"></strong>?</div>
+                    <div id="tpj-scor-bar">
+                        <span class="tpj-sb-corect"><span id="tpj-corect-nr">0</span> ✓</span>
+                        <span class="tpj-sb-gresit"><span id="tpj-gresit-nr">0</span> ✗</span>
+                        <span class="tpj-sb-ramase"><span id="tpj-ramase-nr">0</span> rămase</span>
+                    </div>
+                </div>
+            </div>
+            <div id="tpj-divider"></div>
+            <div id="tpj-scroll">
+                <div id="tpj-foto-grid"></div>
+            </div>
+        </div>
+
+        <!-- Personalități pe Județe — final -->
+        <div id="tpj-final" class="ascuns">
+            <div id="tpj-final-emoji">🏆</div>
+            <div id="tpj-final-titlu"></div>
+            <div id="tpj-final-scor"></div>
+            <div id="tpj-final-hs"></div>
+            <div class="trivia-final-butoane">
+                <button class="btn-trivia-din-nou" onclick="tpjDinNou()">🔄 Din nou</button>
+                <button class="btn-trivia-inapoi" onclick="inapoiDinTpjJoc()">← Județe</button>
+            </div>
+        </div>
+
+        <!-- Ghicește numele — galerie -->
+        <div id="trivia-ghiceste-nume" class="ascuns">
+            <div id="tgn-top">
+                <button class="btn-back-subtle" onclick="inapoiDinGhicesteNume()">← Înapoi</button>
+                <div id="tgn-header">
+                    <h2>Ghicește numele</h2>
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div id="tgn-scor-bar"><span id="tgn-rezolvate">0</span> / <span id="tgn-total">0</span> ghicite</div>
+                        <button class="btn-tgn-gata" onclick="tgnTermina()">✓ Gata</button>
+                    </div>
+                </div>
+                <div id="tgn-search-wrap">
+                    <input id="tgn-search" type="text" placeholder="Scrie un nume…" autocomplete="off"
+                           oninput="tgnOnInput(this.value)">
+                </div>
+            </div>
+            <div id="tgn-divider"></div>
+            <div id="tgn-scroll">
+                <div id="tgn-grid"></div>
+            </div>
+        </div>
+
+        <!-- Listă personalități -->
+        <div id="trivia-lista" class="ascuns">
+            <button class="btn-back-subtle" onclick="inapoiDinTriviaLista()">← Înapoi</button>
+            <div id="trivia-lista-content"></div>
         </div>
 
         <!-- Joc -->
         <div id="trivia-joc" class="ascuns">
+            <button class="btn-back-subtle ministri-back-btn" onclick="inapoiDinTriviaJoc()">← Ieși</button>
             <div id="trivia-progres-bar-wrap"><div id="trivia-progres-bar"></div></div>
             <div id="trivia-nr">Întrebarea 1 / 10</div>
             <div id="trivia-portret-wrap">
@@ -103,6 +317,11 @@
             </div>
             <div id="trivia-intrebare">În ce județ s-a născut?</div>
             <div id="trivia-optiuni"></div>
+            <div id="trivia-scris-wrap" class="ascuns">
+                <input id="trivia-scris-input" type="text" placeholder="Scrie numele complet…" autocomplete="off"
+                       onkeydown="if(event.key==='Enter') verificaNume()">
+                <button class="btn-verifica-trivia" onclick="verificaNume()">Verifică</button>
+            </div>
             <div id="trivia-feedback"></div>
         </div>
 
@@ -113,8 +332,8 @@
             <div id="trivia-final-timp"></div>
             <div id="trivia-final-record"></div>
             <div class="trivia-final-butoane">
-                <button class="btn-trivia-din-nou" onclick="startTrivia()">🔄 Din nou</button>
-                <button class="btn-trivia-inapoi" onclick="inapoi()">← Meniu</button>
+                <button class="btn-trivia-din-nou" id="trivia-btn-din-nou" onclick="restartTrivia()">🔄 Din nou</button>
+                <button class="btn-trivia-inapoi" onclick="inapoiDinTriviaJoc()">← Meniu</button>
             </div>
         </div>
 
@@ -559,6 +778,31 @@
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Firebase compat SDK — trebuie înainte de script.js -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="script.js"></script>
+<script src="firebase-sync.js"></script>
+
+<!-- ── Modal login cloud ──────────────────────────────────────────────────── -->
+<div id="fb-modal" class="ascuns">
+    <div id="fb-modal-overlay" onclick="inchideModalCloud()"></div>
+    <div id="fb-modal-box">
+        <button class="fb-close-btn" onclick="inchideModalCloud()">✕</button>
+        <div style="font-size:2rem;margin-bottom:8px">☁️</div>
+        <h2 style="margin:0 0 4px">Cont cloud</h2>
+        <p style="margin:0 0 20px;opacity:.6;font-size:.9rem">Scorurile tale se sincronizează pe orice PC</p>
+        <input id="fb-email" type="email" placeholder="Email" autocomplete="email">
+        <input id="fb-pass"  type="password" placeholder="Parolă (min. 6 caractere)" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter') fbLogin()">
+        <div id="fb-err" class="fb-err-text"></div>
+        <div class="fb-btn-row">
+            <button class="fb-btn-primary" onclick="fbLogin()">Autentificare</button>
+            <button class="fb-btn-secondary" onclick="fbRegister()">Cont nou</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
